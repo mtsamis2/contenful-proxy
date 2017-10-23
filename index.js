@@ -4,7 +4,7 @@ require('dotenv').load();
 
 var options = {
   logLevel: 'debug',
-  target: 'https://cdn.contentful.com/spaces/' + process.env.APP_ID + '/entries?content_type=2wKn6yEnZewu2SCCkus4as',
+  target: 'https://cdn.contentful.com/spaces/' + process.env.APP_ID,
   changeOrigin: true,
   headers: {
     'Authorization': 'Bearer ' + process.env.API_KEY
@@ -24,7 +24,7 @@ var apiProxy = proxy(options);
 
 var app = express();
 
-app.use('/api', apiProxy);
+app.use('/api/**', apiProxy);
 
 var server = app.listen(process.env.PORT || 3000, function(){
   console.log('Listening on port ' + server.address().port);
