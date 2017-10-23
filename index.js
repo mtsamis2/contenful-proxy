@@ -1,0 +1,33 @@
+var express = require('express');
+var proxy = require('http-proxy-middleware');
+require('dotenv').load();
+
+var options = {
+  logLevel: 'debug',
+  target: 'https://cdn.contentful.com/spaces/' + process.env.APP_ID + '/entries?content_type=2wKn6yEnZewu2SCCkus4as',
+  changeOrigin: true,
+  headers: {
+    'Authorization': 'Bearer ' + process.env.API_KEY
+  },
+  pathRewrite: {
+    '^/api' : ''
+  },
+  // http://stackoverflow.com/questions/14262986/node-js-hostname-ip-doesnt-match-certificates-altnames
+  // https://github.com/nodejitsu/node-http-proxy/blob/f345a1ac2dde1884e72b952a685a0a1796059f14/lib/http-proxy/common.js#L54
+  secure: false,
+  ssl: {
+    rejectUnauthorized: false
+  }
+};
+
+var apiProxy = proxy(options);
+
+var app = express();
+
+app.use('/api', apiProxy);
+
+var server = app.listen(process.env.PORT || 3000, function(){
+  console.log('Listening on port ' + server.address().port);
+});
+
+module.exports = app;
